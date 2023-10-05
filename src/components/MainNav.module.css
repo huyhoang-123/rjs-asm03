@@ -1,0 +1,41 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  padding: 20px 0 10px;
+}
+.list {
+  list-style-type: none;
+  display: flex;
+}
+.list a {
+  text-decoration: none;
+  margin-right: 30px;
+  color: black;
+}
+.list a:hover,
+.list a.active {
+  color: #faebd7;
+}
+.banner {
+  background-image: url(file:///D:/reactjs/rjs-asm03/public/images/banner1.jpg);
+  width: 100%;
+  height: 500px;
+  background-size: cover;
+  background-position: 50% 50%;
+}
+.fixp {
+  padding: 10rem 0 0 4rem;
+  font-style: italic;
+  font-weight: 300;
+}
+.fbtn {
+  margin-left: 4rem;
+  font-size: 1rem;
+  padding: 10px 30px;
+
+  background-color: #383838;
+}
+.imghover:hover {
+  webkit-filter: blur(2px); /* Chrome, Safari, Opera */
+  filter: blur(1px);
+}
