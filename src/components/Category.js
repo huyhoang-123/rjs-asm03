@@ -1,42 +1,53 @@
-import { Link } from "react-router-dom";
 import { NavLink } from "react-router-dom";
 import classes from "./MainNav.module.css";
-import React, { useState, useEffect } from "react";
-import Modal from "react-bootstrap/Modal";
-import Button from "react-bootstrap/Button";
+import React, { useState } from "react";
 import "./Category.module.css";
 import "bootstrap/dist/css/bootstrap.css";
-let X = {};
+import FetchData from "./FetchData";
+import { useSelector, useDispatch } from "react-redux";
+import { popupAction } from "../store";
+import ProductPopup from "./ProductPopup";
+
 function CategoryShop() {
   const [dataList, setDataList] = useState();
-  const [ProductList, setProductList] = useState();
-  const [open, setOpen] = useState(false);
-  const [show, setShow] = useState(false);
+  const [popupProduct, setPopupProduct] = useState();
+  const dispatch = useDispatch();
 
-  function FetchCategory() {
-    fetch(
-      "https://firebasestorage.googleapis.com/v0/b/funix-subtitle.appspot.com/o/Boutique_products.json?alt=media&token=dc67a5ea-e3e0-479e-9eaf-5e01bcd09c74"
-    )
-      .then((res) => res.json())
-      .then((json) => {
-        console.log(json);
-        setDataList(json);
-      });
-  }
-  useEffect(() => {
-    FetchCategory();
-  }, []);
-  const handleClose = () => {
-    setShow(false);
+  const FetchCategory = (productData) => {
+    setDataList(productData);
   };
+  console.log(dataList);
+  const showModal = useSelector((state) => state.popup.modal);
+
   const handleShow = (DetailList) => {
-    setShow(true);
-    setProductList(DetailList);
-    X = DetailList;
+    console.log(DetailList);
+    dispatch(popupAction.SHOW_POPUP());
+    setPopupProduct(DetailList);
+    console.log(popupProduct);
   };
 
   return (
     <div className="container">
+      <FetchData onFetch={FetchCategory} />
+      <div className={classes.banner}>
+        <p className={classes.fixp}>NEW INSPIRATION 2020</p>
+        <p style={{ marginLeft: "4rem", fontSize: "2rem" }}>
+          20% OFF ON NEW <br />
+          SEASON
+        </p>
+        <button className={classes.fbtn}>
+          <NavLink
+            to="/shop"
+            style={{
+              color: "white",
+              fontStyle: "italic",
+              textDecoration: "none",
+            }}
+          >
+            Browse colections
+          </NavLink>
+        </button>
+      </div>
       <div>
         <p
           style={{
@@ -110,7 +121,7 @@ function CategoryShop() {
         {dataList?.length !== 0 ? (
           dataList?.map((list, id) => {
             return (
-              <div className="col-3" onClick={() => handleShow(list)}>
+              <div key={id} className="col-3" onClick={() => handleShow(list)}>
                 <img
                   src={list.img1}
                   style={{ width: "100%", padding: "20px 0 0" }}
@@ -125,7 +136,7 @@ function CategoryShop() {
                 >
                   {list.name}
                 </p>
-                <p style={{ textAlign: "center" }}>{list.price} VND</p>
+                <p style={{ textAlign: "center" }}>{list.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")} VND</p>
               </div>
             );
           })
@@ -190,35 +201,9 @@ function CategoryShop() {
           </form>
         </div>
       </div>
-
-      <Modal
-        show={show}
-        onHide={handleClose}
-        animation={false}
-              centered
-      >
-        <Modal.Header closeButton style={{border:"none"}}>
-        </Modal.Header>
-        <Modal.Body>
-          {" "}
-          <div className="row">
-            <div className="col-6">
-              <img
-                src={X?.img1}
-                style={{ width: "100%", height: "auto" }}
-              ></img>
-            </div>
-            <div className="col-6">
-              <h5>{X?.name}</h5>
-              <p>{X?.price} VND</p>
-              <p>{X?.short_desc}</p>
-            </div>
-          </div>
-        </Modal.Body>
-        <Modal.Footer style={{border:'none'}}>
-        
-        </Modal.Footer>
-      </Modal>
+      {popupProduct && showModal === true && (
+        <ProductPopup productDetail={popupProduct} />
+      )}
     </div>
   );
 }

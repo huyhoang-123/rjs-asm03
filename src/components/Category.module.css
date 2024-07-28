@@ -1,0 +1,7 @@
+.banner {
+  background-image: url(file:///D:/reactjs/rjs-asm03/public/images/banner1.jpg);
+  width: 100%;
+  height: 500px;
+  background-size: cover;
+  background-position: 50% 50%;
+}
