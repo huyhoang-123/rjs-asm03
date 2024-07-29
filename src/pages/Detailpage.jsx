@@ -4,17 +4,22 @@ import { useSelector, useDispatch } from "react-redux";
 import { countAction } from "../store";
 import { useFetch } from "../components/hooks/useFetch";
 import "bootstrap-icons/font/bootstrap-icons.css";
+
 const DetailPage = () => {
-  const [category, setCategory] = useState();
   const dispatch = useDispatch();
   const count = useSelector((state) => state.cartCount.count);
   const params = useParams();
-  const products = useFetch();
-  console.log(products);
-  const detailProduct = products.find(
+  const { fetchedData, isFetching } = useFetch();
+  console.log(fetchedData);
+  const detailProduct = fetchedData.find(
     (item) => item._id.$oid === params.productId
   );
   console.log(detailProduct);
+
+  if (!detailProduct) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <div className="container">
       <div className="row ">
@@ -117,6 +122,54 @@ const DetailPage = () => {
             {detailProduct.long_desc}
           </ul>
         </div>
+      </div>
+      <button
+        style={{
+          padding: "5px 20px",
+          color: "white",
+          background: "black",
+          fontWeight: "200",
+          margin: "2rem 0",
+        }}
+      >
+        RELEATED PRODUCT
+      </button>
+      <div className="row">
+        {fetchedData?.length != 0 ? (
+          fetchedData
+            .filter((item) => {
+              return (
+                item.category === detailProduct.category &&
+                item._id.$oid != params.productId
+              );
+            })
+            .map((e, id) => {
+              return (
+                <div className="col-3" key={id}>
+                  <img
+                    src={e.img1}
+                    style={{ width: "100%", padding: "20px 0 0" }}
+                  ></img>
+                  <p
+                    style={{
+                      textAlign: "center",
+                      fontWeight: "500",
+                      margin: "10px 0 10px",
+                      cursor: "pointer",
+                    }}
+                  >
+                    {e.name}
+                  </p>
+                  <p style={{ textAlign: "center" }}>
+                    {e.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}{" "}
+                    VND
+                  </p>
+                </div>
+              );
+            })
+        ) : (
+          <></>
+        )}
       </div>
     </div>
   );

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import FetchData from "./FetchData";
+
 import "bootstrap/dist/css/bootstrap.css";
 import classes from "./ProductList.module.css";
 import { useSelector, useDispatch } from "react-redux";
@@ -7,16 +7,13 @@ import { categotyAction } from "../store";
 import { useParams, useNavigate } from "react-router-dom";
 import { useFetch } from "./hooks/useFetch";
 const ProductList = () => {
-  const [productData, setProductData] = useState();
   const [search, setSearch] = useState("");
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const params = useParams();
-  const product = useFetch();
-  console.log(product);
-  const FetchCategory = (productData) => {
-    setProductData(productData);
-  };
+  const { fetchedData, isFetching } = useFetch();
+  console.log(fetchedData);
+
   const category = useSelector((state) => state.categoryList.category);
 
   const onChangeSelect = (event) => {
@@ -39,7 +36,6 @@ const ProductList = () => {
 
   return (
     <div className="container">
-      <FetchData onFetch={FetchCategory} />
       <div className={classes.banner}>
         <h3>Shop</h3>
         <span>Shop</span>
@@ -166,7 +162,7 @@ const ProductList = () => {
             </div>
 
             {search === ""
-              ? productData
+              ? fetchedData
                   ?.filter((item) => {
                     return category === "" ? item : item.category === category;
                   })
@@ -203,7 +199,7 @@ const ProductList = () => {
                       </div>
                     );
                   })
-              : productData
+              : fetchedData
                   .filter((item) => item.name.toLowerCase().includes(search))
                   .map((list, id) => {
                     console.log(list);

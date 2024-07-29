@@ -3,20 +3,16 @@ import classes from "./MainNav.module.css";
 import React, { useState } from "react";
 import "./Category.module.css";
 import "bootstrap/dist/css/bootstrap.css";
-import FetchData from "./FetchData";
 import { useSelector, useDispatch } from "react-redux";
 import { popupAction } from "../store";
 import ProductPopup from "./ProductPopup";
-
+import { useFetch } from "./hooks/useFetch";
 function CategoryShop() {
-  const [dataList, setDataList] = useState();
   const [popupProduct, setPopupProduct] = useState();
   const dispatch = useDispatch();
 
-  const FetchCategory = (productData) => {
-    setDataList(productData);
-  };
-  console.log(dataList);
+  const { fetchedData, isFetching } = useFetch();
+  console.log(fetchedData);
   const showModal = useSelector((state) => state.popup.modal);
 
   const handleShow = (DetailList) => {
@@ -28,7 +24,6 @@ function CategoryShop() {
 
   return (
     <div className="container">
-      <FetchData onFetch={FetchCategory} />
       <div className={classes.banner}>
         <p className={classes.fixp}>NEW INSPIRATION 2020</p>
         <p style={{ marginLeft: "4rem", fontSize: "2rem" }}>
@@ -118,8 +113,8 @@ function CategoryShop() {
         <h5 style={{ padding: "0" }}>TOP TRENDING PRODUCTS</h5>
       </div>
       <div className="row">
-        {dataList?.length !== 0 ? (
-          dataList?.map((list, id) => {
+        {fetchedData?.length !== 0 ? (
+          fetchedData?.map((list, id) => {
             return (
               <div key={id} className="col-3" onClick={() => handleShow(list)}>
                 <img
@@ -136,7 +131,10 @@ function CategoryShop() {
                 >
                   {list.name}
                 </p>
-                <p style={{ textAlign: "center" }}>{list.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")} VND</p>
+                <p style={{ textAlign: "center" }}>
+                  {list.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}{" "}
+                  VND
+                </p>
               </div>
             );
           })
